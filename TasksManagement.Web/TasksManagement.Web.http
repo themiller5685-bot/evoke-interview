@@ -1,0 +1,25 @@
+@TasksManagement.Web_HostAddress = http://localhost:5055
+
+GET {{TasksManagement.Web_HostAddress}}/api/v1/tasks?status=1
+Accept: application/json
+
+###
+
+GET {{TasksManagement.Web_HostAddress}}/api/v1/tasks/1
+Accept: application/json
+
+###
+
+POST {{TasksManagement.Web_HostAddress}}/api/v1/tasks
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": 0,
+  "title": "test",
+  "description": "test task",
+  "priority": 1,
+  "status": 1,
+  "createdAt": "2024-12-05T10:17:00.533Z",
+  "completedAt": "2024-12-05T10:17:00.533Z"
+}
