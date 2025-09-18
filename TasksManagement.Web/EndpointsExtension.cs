@@ -20,9 +20,18 @@ public static class EndpointsExtension
         //     .AddEndpointFilter<LoggingFilter>()
         //     .WithOpenApi();
 
-        //group.MapPost("/tasks", ...)
-        //     .AddEndpointFilter<LoggingFilter>()
-        //     .WithOpenApi();
+        // Example handler for POST /tasks
+        group.MapPost("/tasks", async ([FromServices] ITasksService tasksService, [FromBody] ManagedTask task) =>
+        {
+            var result = await tasksService.Create(task);
+            if (result?.ErrorCode != ErrorCode.Success)
+            {
+                return Results.BadRequest(result);
+            }
+            return Results.Ok(result);
+        })
+        .AddEndpointFilter<LoggingFilter>()
+        .WithOpenApi();
     }
 
     //TODO: You can implement and use this method for mapping Result to Api IResult

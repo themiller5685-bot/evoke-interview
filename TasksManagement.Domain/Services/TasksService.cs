@@ -5,11 +5,29 @@ namespace TasksManagement.Domain.Services;
 
 public class TasksService : ITasksService
 {
-    //TODO: implement TasksService
-
-    public Task<Result<ManagedTask>> Create(ManagedTask task)
+    ITaskRepository _taskRepository;
+    public TasksService(ITaskRepository taskRepository)
     {
-        throw new NotImplementedException();
+        _taskRepository = taskRepository;
+    }
+
+    public async Task<Result<ManagedTask>> Create(ManagedTask task)
+    {
+        if (task.Id != 0 || task == null) // Id = 0 means that the task is new
+        {
+            return null; // Todo implement return error
+        }
+        try
+        {
+            task.CreatedAt = DateTime.Now;
+            var result = new Result<ManagedTask>() { Data = task };
+            return await _taskRepository.Create(task);
+        }
+         catch (Exception e)
+        {
+            return null;
+        }
+
     }
 
     public Task<Result<List<ManagedTask>>> Get(ManagedTaskStatus status)

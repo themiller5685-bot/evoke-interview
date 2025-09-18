@@ -4,6 +4,10 @@
 
 public enum ManagedTaskStatus
 {
+    Pending,
+    InProgress,
+    Completed,
+    Cancelled
 }
 
 public enum ErrorCode
