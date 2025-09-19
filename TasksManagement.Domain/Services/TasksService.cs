@@ -32,11 +32,15 @@ public class TasksService : ITasksService
 
     public Task<Result<List<ManagedTask>>> Get(ManagedTaskStatus status)
     {
-        throw new NotImplementedException();
+        return _taskRepository.Get(status);
     }
 
-    public Task<Result<ManagedTask>> GetById(int id)
+    public async Task<Result<ManagedTask>> GetById(int id)
     {
-        throw new NotImplementedException();
+        if (id <= 0)
+        {
+            return (new Result<ManagedTask>() { Data = null, ErrorCode = ErrorCode.NotFound, ErrorDescription = "Id cannot be lower than 0" });
+        }
+        return await _taskRepository.GetById(id);
     }
 }

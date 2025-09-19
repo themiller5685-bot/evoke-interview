@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using TasksManagement.Domain.Models;
 using TasksManagement.Domain.Services;
 
@@ -12,13 +13,29 @@ public static class EndpointsExtension
 
         //TODO: Map the 3 apis endpoints
 
-        //group.MapGet("/tasks" ...)
-        //     .AddEndpointFilter<LoggingFilter>()
-        //     .WithOpenApi();
+        group.MapGet("/tasks", async ([FromServices] ITasksService tasksService, [FromQuery] ManagedTaskStatus taskStatus) =>
+        {
+            var result = await tasksService.Get(taskStatus);
+            if (result?.ErrorCode != ErrorCode.Success)
+            {
+                return Results.BadRequest(result);
+            }
+            return Results.Ok(result);
+        })
+             .AddEndpointFilter<LoggingFilter>()
+             .WithOpenApi();
 
-        //group.MapGet("/tasks/{id}" ...)
-        //     .AddEndpointFilter<LoggingFilter>()
-        //     .WithOpenApi();
+        group.MapGet("/tasks/{id}", async ([FromServices] ITasksService tasksService, [FromQuery] int taskId) =>
+        {
+            var result = await tasksService.GetById(taskId);
+            if (result?.ErrorCode != ErrorCode.Success)
+            {
+                return Results.BadRequest(result);
+            }
+            return Results.Ok(result);
+        })
+             .AddEndpointFilter<LoggingFilter>()
+             .WithOpenApi();
 
         // Example handler for POST /tasks
         group.MapPost("/tasks", async ([FromServices] ITasksService tasksService, [FromBody] ManagedTask task) =>

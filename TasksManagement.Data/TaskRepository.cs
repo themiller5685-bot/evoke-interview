@@ -13,8 +13,8 @@ public class TaskRepository : ITaskRepository
     {
         try
         {
-            TaskList.Add(task);
             task.Id = TaskList.Count + 1; // Simulate auto-incrementing primary key
+            TaskList.Add(task);
             var result = new Result<ManagedTask>() { Data = task};
             return Task.FromResult(result);
 
@@ -28,18 +28,15 @@ public class TaskRepository : ITaskRepository
     public Task<Result<List<ManagedTask>>> Get(ManagedTaskStatus? status)
     {
         try
-        {
+        { 
             if (status == null)
             {
-                var result = new Result<List<ManagedTask>>() { Data = TaskList };
-                return Task.FromResult(result);
+                // Return all in case of null
+                return Task.FromResult(new Result<List<ManagedTask>>() { Data = TaskList });
             }
-            else
-            {
-                var filteredTasks = TaskList.Where(t => t.Status == status).ToList();
-                var result = new Result<List<ManagedTask>>() { Data = filteredTasks };
-                return Task.FromResult(result);
-            }
+            var filteredTasks = TaskList.Where(t => t.Status == status).ToList();
+            var result = new Result<List<ManagedTask>>() { Data = filteredTasks };
+            return Task.FromResult(result); 
         }
         catch (Exception e)
         {
@@ -50,6 +47,21 @@ public class TaskRepository : ITaskRepository
 
     public Task<Result<ManagedTask>> GetById(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var task = TaskList.Find(t => t.Id == id);
+            if (task == null)
+            {
+                return Task.FromResult(new Result<ManagedTask>() { Data = null, ErrorCode = ErrorCode.NotFound, ErrorDescription = $"Task with id {id} not found" });
+            }
+
+            return Task.FromResult(new Result<ManagedTask>() { Data = task });
+
+        }
+        catch (Exception e)
+        {
+            var result = new Result<ManagedTask>() { Data = null, ErrorCode = ErrorCode.NotFound, ErrorDescription = "Failed to retrieve task from database" };
+            return Task.FromResult(result);
+        }
     }
 }
